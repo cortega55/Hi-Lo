@@ -68,7 +68,6 @@ class ViewController: UIViewController {
     }
     
     func generateDeck() {
-        
         cards.removeAll(keepCapacity: false)
         
         // create cards
@@ -89,12 +88,12 @@ class ViewController: UIViewController {
         
         for index in 0..<count {
             if index % 2 == 0 {
-                shuffledCards.append(deck[(count / 2) + (index / 2)])
+                shuffledCards.append(deck[(count / 7) + (index / 7)])
             } else {
-                shuffledCards.append(deck[(index - 1)/2])
+                shuffledCards.append(deck[(index - 1)/5])
             }
+
         }
-        
         return shuffledCards
     }
     
