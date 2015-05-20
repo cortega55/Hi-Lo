@@ -9,21 +9,68 @@
 import UIKit
 
 class ViewController: UIViewController {
-    @IBOutlet weak var streak: UILabel!
-    @IBOutlet weak var currentCard: UILabel!
-
+    @IBOutlet weak var score: UILabel!
+    @IBOutlet weak var Deck: UILabel!
     
+    @IBAction func selectLower(sender: AnyObject) {
+        selection = .Lower
+        isCorrect()
+    }
+    @IBAction func selectHigher(sender: AnyObject) {
+        selection = .Higher
+        isCorrect()
+    }
+    var selection: selectionState = .Higher
     var cards: [Int] = []
-    var currentStreak: Int = 0
+    var i: Int = 0
+    var currentStreak: Int = 0 {
+        didSet{
+            
+            /// update my interface
+        }
+    }
     
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupGame()
+        newGame()
+
     }
     
     
-    func setupGame() {
+    func newGame() {
+        generateDeck()
+        currentStreak = 0
+    }
+    
+    func gameOver() {
+        
+    }
+    
+    func isCorrect() {
+        var currentCard: Int = cards[i]
+        var nextCard: Int = cards[i + 1]
+    
+        if selection == .Higher && (currentCard > nextCard) {
+            i++
+            //println(cards[i])
+            currentStreak++
+        } else if selection == .Lower && (currentCard < nextCard) {
+            gameOver()
+        } else if currentCard == nextCard{
+            gameOver()
+        }
+    }
+    
+    enum selectionState {
+        case Higher
+        case Lower
+    }
+    
+    func generateDeck() {
+        
+        cards.removeAll(keepCapacity: false)
+        
         // create cards
         var n:Int = 1
         for i in 1..<53 {
@@ -33,11 +80,8 @@ class ViewController: UIViewController {
                 n = 1
             }
         }
-        
         cards = shuffle(cards)
-        isHigher()
     }
-    
     
     func shuffle(deck: [Int]) ->[Int] {
         let count = deck.count
@@ -53,32 +97,6 @@ class ViewController: UIViewController {
         
         return shuffledCards
     }
-    
-    func isHigher() ->Bool {
-        for (index, value) in enumerate(cards) {
-            println("Item \(index): \(value)")
-            if value > (value + 1){
-                return true
-            }
-            
-        }
-        return false
-    }
-    
-    func isLower() ->Bool {
-        return true
-    }
-    
-    func isMatchOver() ->Bool {
-        if !isHigher() {
-            return false
-        } else if !isLower(){
-            return false
-        }
-        return true
-    }
-    
-
     
 }
 
