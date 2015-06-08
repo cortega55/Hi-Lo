@@ -8,25 +8,25 @@
 
 import UIKit
 
+enum SelectionState {
+    case Higher
+    case Lower
+    case Yes
+    case No
+}
+
+
 class ViewController: UIViewController {
-    @IBOutlet weak var score: UILabel!
-    @IBOutlet weak var Deck: UILabel!
+    @IBOutlet weak var scoreTxt: UILabel!
+    @IBOutlet weak var deckTxt: UILabel!
+    @IBOutlet weak var highBtn: UIButton!
+    @IBOutlet weak var lowBtn: UIButton!
     
-    @IBAction func selectLower(sender: AnyObject) {
-        selection = .Lower
-        isCorrect()
-    }
-    @IBAction func selectHigher(sender: AnyObject) {
-        selection = .Higher
-        isCorrect()
-    }
-    var selection: selectionState = .Higher
     var cards: [Int] = []
-    var i: Int = 0
     var currentStreak: Int = 0 {
         didSet{
-            
-            /// update my interface
+            scoreTxt.text = "\(currentStreak)"
+
         }
     }
     
@@ -41,32 +41,40 @@ class ViewController: UIViewController {
     func newGame() {
         generateDeck()
         currentStreak = 0
+        
+         deckTxt.text = "\(cards[currentStreak])"
     }
     
     func gameOver() {
-        
+        self.performSegueWithIdentifier("gameOver", sender: self)
     }
     
-    func isCorrect() {
-        var currentCard: Int = cards[i]
-        var nextCard: Int = cards[i + 1]
+    @IBAction func selectLower(sender: UIButton) {
+        lowBtn.hidden = false
+        determineIfCorrect(.Lower)
+    }
+    @IBAction func selectHigher(sender: UIButton) {
+        highBtn.hidden = false
+        determineIfCorrect(.Higher)
+    }
     
-        if selection == .Higher && (currentCard > nextCard) {
-            i++
-            //println(cards[i])
+    func determineIfCorrect(selectionState:SelectionState) {
+        
+        let currentCard: Int = cards[currentStreak]
+        let nextCard: Int = cards[currentStreak + 1]
+        
+        deckTxt.text = "\(nextCard)"
+    
+        if selectionState == .Higher && (currentCard < nextCard) {
             currentStreak++
-        } else if selection == .Lower && (currentCard < nextCard) {
-            gameOver()
-        } else if currentCard == nextCard{
+        } else if selectionState == .Lower && (currentCard > nextCard) {
+            currentStreak++
+        } else {
             gameOver()
         }
     }
     
-    enum selectionState {
-        case Higher
-        case Lower
-    }
-    
+ 
     func generateDeck() {
         cards.removeAll(keepCapacity: false)
         
@@ -87,10 +95,11 @@ class ViewController: UIViewController {
         var shuffledCards: [Int] = []
         
         for index in 0..<count {
+            var randNum = Int(arc4random_uniform(UInt32(count - index)))
             if index % 2 == 0 {
-                shuffledCards.append(deck[(count / 7) + (index / 7)])
+                shuffledCards.append(deck[randNum])
             } else {
-                shuffledCards.append(deck[(index - 1)/5])
+                shuffledCards.append(deck[randNum + 1])
             }
 
         }
